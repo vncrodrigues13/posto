@@ -1,0 +1,25 @@
+1;gasolina comum;4.15;casa;
+2;alcool;3.30;casa;
+3;gnv;3.00;casa;
+4;diesel;3.50;casa;
+5;gasolina aditivada;4.50;casa;
+6;refrigerante;4.00;coca cola;
+7;refrigerante;4.00;fanta;
+8;refrigerante;4.00;guarana;
+9;refrigerante;4.00;sprite;
+10;Salgado de queijo;6.00;casa;
+11;Salgado misto;6.00;casa;
+12;Salgado de frango;6.00;casa;
+13;Coxinha de catupiry;6.00;casa;
+14;Coxinha de frango catupiry;6.00;casa;
+15;Escondidinho de charque;6.00;casa;
+16;Cafe preto;5.00;casa;
+17;Cafe com leite;5.00;casa
+18;Cafe expresso;5.00;casa
+19;Salgadinho;4.50;Cheetos;
+20;Salgadinho;4.50;Doritos;
+21;Salgadinho;4.50;Pingo de Ouro;
+22;Salgadinho;4.50;Fandangos;
+23;Agua Mineral;3.00;Santa Joana;
+24;Agua Mineral;3.00;Santa Clara;
+25;Agua Mineral;3.00;Indaia;
