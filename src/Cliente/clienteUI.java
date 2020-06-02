@@ -1,100 +1,50 @@
-package postoEntities;
+package Cliente;
 
-import java.util.Scanner;
 import buyEntities.compras;
 import buyEntities.produto;
-import posto.exceptions.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import Cliente.*;
-import java.io.*;
-import admin.*;
 
-public class posto {
+import java.util.Calendar;
+
+import postoEntities.repositorioContas;
+import posto.exceptions.invalidItem;
+import posto.exceptions.invalidPrice;
+import posto.exceptions.invalidQtdItens;
+import java.io.FileNotFoundException;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import posto.exceptions.*;
+
+import postoEntities.repProduto;
+import java.util.Scanner;
+
+public class clienteUI implements I_ClienteUI {
 
     private Scanner in = new Scanner(System.in);
 
+    private cliente user;
+
+    private Calendar calendar; //usar na hora de setar a dada das compras
+
+    private repositorioContas repContas;
+
     private compras carrinhoTemp;
 
-    private final repProduto repositorioItens = new repProduto(); //repositorioItens
+    private repProduto repProduto;
 
-    private repositorioContas repContas; //repositorio contas
+    private int id;
 
-    private repositorioCompras repCompras; //repositorio compras
-    
-    private repositorioFuncionarios repFunc;
-
-    private usr loginUsr;
-
-    private acessoAdmin acess;
-
-    private acessoGerente acessoGerente;
-
-    
-
-    public posto() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
-        loginUsr = new usr();
-        repCompras = repositorioCompras.getInstance(); 
+    public clienteUI(cliente c) throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException {
+        this.user = c;
         repContas = repositorioContas.getInstance();
-        repFunc = repositorioFuncionarios.getInstance();
-        
-        acessoGerente = new acessoGerente();
-        //acessoUsuario(); <-----------------------------
-        //attArquivos v v v 
-        
-        repCompras.save();
-        repContas.save();
-        repFunc.save();
-        
-
+        repProduto = new repProduto();
     }
 
-    public void acessoUsuario() throws invalidItem, invalidPrice, invalidQtdItens, 
-            invalidLogin, invalidAccess, naoProduto, naoCombustivel, noHistory, FileNotFoundException {
-        String cpf = loginUsr.login();
-        if (cpf.length() == 12) {
-            acess = new acessoAdmin();
-        }
-        if (cpf.length() == 11) {
-            logar(cpf);
-        }
-        if (cpf.length() == 13){
-            acessoGerente.loginGerente();
-        }
-            
-        
-
-    }
-    public void logar(String cpf) throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException, naoProduto, naoCombustivel, noHistory{
-        char resp = 's';
-            int y;
-            do {
-                System.out.println("Olá,");
-                System.out.println("Se voce quiser fazer novas compras, digite: 1");
-                System.out.println("Se voce quiser ver seus historicos de compra, digite: 2");
-                y = in.nextInt();
-                if (y == 1) {
-                    carrinhoTemp = new compras(cpf);
-                    fazerCompras();
-                    do {
-                        System.out.print("Você deseja fazer mais alguma operação no posto (s/n): ");
-                        resp = in.next().charAt(0);
-                    } while (resp != 's' && resp != 'n');
-
-                } else if (y == 2) {
-                    repContas.getCliente(cpf).listarHistoricoDeCompras();
-                    do {
-                        System.out.print("Você deseja fazer mais alguma operação no posto (s/n): ");
-                        resp = in.next().charAt(0);
-                    } while (resp != 's' && resp != 'n');
-                }
-            } while (y != 1 && y != 2 || resp == 's');
-    }
-
-    
-    public void fazerCompras() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel {
+    @Override
+    public void fazerCompras() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens{
         boolean rep = true;
-        int id;
+
         double valorPago;
         System.out.println("Boa noite!");
         do {
@@ -108,12 +58,14 @@ public class posto {
             int valor = in.nextInt();
 
             switch (valor) {
+                /*
                 case 0:
                     finalizarCompra();
                     repCompras.addRepositorio(carrinhoTemp); //add ao repositorio de compras
                     adcionarCompraConta(carrinhoTemp.getCPF(), carrinhoTemp);
                     rep = false;
                     break;
+                 */
                 case 1:
                     listarItens();
                     System.out.print("Qual a id do item que vc deseja adicionar: ");
@@ -146,7 +98,11 @@ public class posto {
                         carrinhoTemp.listarCarrinhoitens();
                         System.out.print("Qual o item vc deseja aumentar a quantidade: ");
                         id = in.nextInt();
-                        addQtd(id);
+                        try {
+                            addQtd(id);
+                        } catch (invalidItem ex) {
+                            throw new invalidItem();
+                        }
                         break;
                     }
 
@@ -155,7 +111,11 @@ public class posto {
                         carrinhoTemp.listarCarrinhoitens();
                         System.out.print("Qual o item vc deseja diminuir a quantidade: ");
                         id = in.nextInt();
-                        decrQtd(id);
+                        try {
+                            decrQtd(id);
+                        } catch (invalidItem ex) {
+                            throw new invalidItem();
+                        }
                         break;
                     }
 
@@ -163,7 +123,15 @@ public class posto {
             System.out.println("\n\n\n\n\n\n\n\n");
 
         } while (rep);
+    }
 
+    @Override
+    public void listarHistoricoCompras() {
+        try {
+            repContas.listarHistoricoComprasCPF(user.getCpf());
+        } catch (noHistory ex) {
+            System.out.println("Carrinho Zerado");
+        }
     }
 
     public void finalizarCompra() {
@@ -177,7 +145,7 @@ public class posto {
             int i;
             System.out.print("Quantos itens vc quer? ");
             i = in.nextInt();
-            carrinhoTemp.addItem(repositorioItens.getProduto(id), i);
+            carrinhoTemp.addItem(repProduto.getProduto(id), i);
         } catch (invalidItem e) {
             throw new invalidItem();
         } catch (invalidQtdItens e) {
@@ -187,7 +155,7 @@ public class posto {
 
     public void removerItem(int id) throws invalidItem {
         try {
-            carrinhoTemp.removerItem(repositorioItens.getProduto(id));
+            carrinhoTemp.removerItem(repProduto.getProduto(id));
         } catch (invalidItem e) {
             throw new invalidItem();
         }
@@ -195,7 +163,7 @@ public class posto {
 
     public void adicionarCombustivel(int id, double valor) throws invalidItem, invalidPrice {
         try {
-            carrinhoTemp.addComb(repositorioItens.getProduto(id), valor);
+            carrinhoTemp.addComb(repProduto.getProduto(id), valor);
         } catch (invalidItem e) {
             throw new invalidItem();
         } catch (invalidPrice e) {
@@ -205,7 +173,7 @@ public class posto {
 
     public void addQtd(int id) throws invalidItem {
         try {
-            carrinhoTemp.addItem(repositorioItens.getProduto(id));
+            carrinhoTemp.addItem(repProduto.getProduto(id));
         } catch (invalidItem e) {
             throw new invalidItem();
         }
@@ -213,14 +181,14 @@ public class posto {
 
     public void decrQtd(int id) throws invalidItem {
         try {
-            carrinhoTemp.diminuirItem(repositorioItens.getProduto(id));
+            carrinhoTemp.diminuirItem(repProduto.getProduto(id));
         } catch (invalidItem e) {
             throw new invalidItem();
         }
     }
 
     public void listarCombustiveis() {
-        for (produto p : repositorioItens.getRepProduto()) {
+        for (produto p : repProduto.getRepProduto()) {
             if (p.getId() <= 5) {
                 System.out.println(p);
             }
@@ -228,7 +196,7 @@ public class posto {
     }
 
     public void listarItens() {
-        for (produto p : repositorioItens.getRepProduto()) {
+        for (produto p : repProduto.getRepProduto()) {
             if (p.getId() > 5) {
                 System.out.println(p);
             }
@@ -238,4 +206,5 @@ public class posto {
     public void adcionarCompraConta(String cpf, compras car) {
         repContas.getCliente(cpf).addArrayList(car);
     }
+
 }

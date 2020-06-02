@@ -30,20 +30,18 @@ public class compras {
         }
     }
 
-    public void addQtd(produto p) throws invalidItem{
+    public void addItem(produto p) throws invalidItem{
         if (existe(p)) {
             getPedido(p).addQtd();
-            
         }
     }
 
-    public void decrQtd(produto p)throws invalidItem {
+    public void diminuirItem(produto p)throws invalidItem {
         if (existe(p)) {
             if (getPedido(p).getQuantidade() > 1) {
                 getPedido(p).decrQtd(1);
             } else {
                 removerItem(p);
-                
             }
         }
     }

@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/postoEntities/posto.java</file>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/Cliente/clienteUI.java</file>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/buyEntities/compras.java</file>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/Cliente/I_ClienteUI.java</file>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/UI/begin.java</file>
+            <file>file:/C:/Users/vinic/Documents/NetBeansProjects/Posto/src/Cliente/I_Compras.java</file>
+        </group>
     </open-files>
 </project-private>

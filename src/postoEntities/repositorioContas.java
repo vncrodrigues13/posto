@@ -46,7 +46,7 @@ public class repositorioContas implements Runnable {
         return false;
     }
 
-    public void adicionarContaLista(String cpf) throws invalidItem, invalidPrice, invalidQtdItens {
+    public void adicionarContaLista(String cpf){
         if (cpf.length() == 11) {
             lista_clientes.add(new cliente(cpf));
             
@@ -58,7 +58,7 @@ public class repositorioContas implements Runnable {
     public void save(){
         Thread c = new Thread(this);
         c.start();
-}
+    }
 
     @Override public void run(){
         String path = ".\\src\\file\\clientes.txt";
