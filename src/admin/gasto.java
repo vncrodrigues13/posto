@@ -18,14 +18,16 @@ public class gasto {
     public void addGasto(double valor) {
         if (valor > 0) {
             valorArquivado += valor;
-            try {
-                bw = new BufferedWriter(new FileWriter(path));
-                bw.write(Double.toString(valorArquivado));
-                bw.flush();
-            } catch (IOException e) {
-            }
         }
+    }
 
+    public synchronized void save(){
+        try {
+            bw = new BufferedWriter(new FileWriter(path));
+            bw.write(Double.toString(valorArquivado));
+            bw.flush();
+        } catch (IOException e) {
+        }
     }
     
 

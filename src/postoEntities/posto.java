@@ -26,9 +26,9 @@ public class posto {
 
     private acessoAdmin acess;
 
-    private admin.receita acessoReceita;
-    
     private acessoGerente acessoGerente;
+
+    
 
     public posto() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
         loginUsr = new usr();
@@ -36,10 +36,11 @@ public class posto {
         repContas = repositorioContas.getInstance();
         
         acessoGerente = new admin.acessoGerente();
-        acessoReceita = new admin.receita();
         acessoUsuario();
         //attArquivos v v v 
         
+        repCompras.save();
+
     }
 
     public void acessoUsuario() throws invalidItem, invalidPrice, invalidQtdItens, 
@@ -103,7 +104,7 @@ public class posto {
             switch (valor) {
                 case 0:
                     finalizarCompra();
-                    repCompras.adicionarArq(carrinhoTemp); //add ao repositorio de compras
+                    repCompras.addRepositorio(carrinhoTemp); //add ao repositorio de compras
                     adcionarCompraConta(carrinhoTemp.getCPF(), carrinhoTemp);
                     rep = false;
                     break;
@@ -213,7 +214,7 @@ public class posto {
     }
 
     public void listarCombustiveis() {
-        for (produto p : repositorioItens.repProdutos) {
+        for (produto p : repositorioItens.getRepProduto()) {
             if (p.getId() <= 5) {
                 System.out.println(p);
             }
@@ -221,7 +222,7 @@ public class posto {
     }
 
     public void listarItens() {
-        for (produto p : repositorioItens.repProdutos) {
+        for (produto p : repositorioItens.getRepProduto()) {
             if (p.getId() > 5) {
                 System.out.println(p);
             }
@@ -230,6 +231,5 @@ public class posto {
 
     public void adcionarCompraConta(String cpf, compras car) {
         repContas.getCliente(cpf).addArrayList(car);
-        acessoReceita.addReceita(car.getValorTot());
     }
 }

@@ -47,10 +47,8 @@ public class usr {
                         return cpf;
                     }else{
                         System.out.println("Sua conta já existe, estamos conectando você\n\n");
-
                         return cpf;
                     }
-                    break;
                 case 2:
                     cpf = entrarConta();
                     if (rc.existeConta(cpf)){

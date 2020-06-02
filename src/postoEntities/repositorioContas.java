@@ -10,7 +10,7 @@ import posto.exceptions.invalidQtdItens;
 import java.io.*;
 import posto.exceptions.noHistory;
 
-public class repositorioContas {
+public class repositorioContas implements Runnable {
     
     private ArrayList<cliente> lista_clientes; //lista de todos os clientes
 
@@ -50,17 +50,32 @@ public class repositorioContas {
         if (cpf.length() == 11) {
             lista_clientes.add(new cliente(cpf));
             
-            String path = ".\\src\\file\\clientes.txt";
-            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
-                bw.write(cpf);
-                bw.newLine();
-                bw.flush();
-            } catch (IOException e) {
-            }
         } else {
             System.out.println("CPF invalido");
         }
     }
+
+    public void save(){
+        Thread c = new Thread(this);
+        c.start();
+}
+
+    @Override public void run(){
+        String path = ".\\src\\file\\clientes.txt";
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            for (cliente c: lista_clientes){
+                String cpf = c.getCpf();
+                bw.write(cpf);
+                bw.newLine();
+                bw.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    
 
     public ArrayList<cliente> getListaClientes() {
         return this.lista_clientes;

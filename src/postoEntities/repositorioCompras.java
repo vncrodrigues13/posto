@@ -6,11 +6,11 @@ import java.io.*;
 import posto.exceptions.invalidItem;
 import posto.exceptions.invalidPrice;
 import posto.exceptions.invalidQtdItens;
-import Cliente.*;
+import Cliente.cliente;
 import java.util.Calendar;
 import java.util.Scanner;
 
-public class repositorioCompras {
+public class repositorioCompras implements Runnable{
 
     private repProduto rp = new repProduto();
     private Scanner in;
@@ -73,16 +73,49 @@ public class repositorioCompras {
             }
         }
     }
+    
+    public void addRepositorio(compras c) {
+        lista_de_compras.add(c);
+    }
+    
 
-    public void adicionarArq(compras c) {
-        String cpf = c.getCPF();
-        Calendar date = c.getData_compra();
-        ArrayList<pedidoItem> pi = c.getPedidoItens();
-        ArrayList<pedidoComb> pc = c.getPedidosCombustiveis();
+    public void save(){
+        Thread c = new Thread(this);
+        c.start();
+    }
+    
+    public void listarCompras() {
+        System.out.println("\n\n\n\n\n\n\n\n\n*************");
+        for (compras c : lista_de_compras) {
+            System.out.println(c + "\n");
+        }
+    }
 
-        String path = ".\\src\\file\\historico_de_compras_usuarios.txt";
-        String title = cpf + ";" + date.get(Calendar.DATE) + ";" + date.get(Calendar.MONTH) + ";";
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+    public ArrayList<compras> getHistoricoCompras() {
+        return lista_de_compras;
+    }
+
+    public double receita() {
+        double gasto = 0;
+        ArrayList<compras> lista = getHistoricoCompras();
+
+        for (compras c : lista) {
+            gasto += c.getValorTot();
+        }
+        return gasto;
+    }
+
+
+    @Override
+    public void run(){
+        for (compras c: lista_de_compras){
+            String cpf = c.getCPF();
+            Calendar date = c.getData_compra();
+            ArrayList<pedidoItem> pi = c.getPedidoItens();
+            ArrayList<pedidoComb> pc = c.getPedidosCombustiveis();
+            String path = ".\\src\\file\\historico_de_compras_usuarios.txt";
+            String title = cpf + ";" + date.get(Calendar.DATE) + ";" + date.get(Calendar.MONTH) + ";";
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
             bw.write(title);
             bw.newLine();
             bw.flush();
@@ -105,30 +138,9 @@ public class repositorioCompras {
             bw.write(title);
             bw.newLine();
             bw.flush();
-        } catch (IOException e) {
+            } catch (IOException e) {
 
+            }
         }
     }
-
-    public void listarCompras() {
-        System.out.println("\n\n\n\n\n\n\n\n\n*************");
-        for (compras c : lista_de_compras) {
-            System.out.println(c + "\n");
-        }
-    }
-
-    public ArrayList<compras> getHistoricoCompras() {
-        return lista_de_compras;
-    }
-
-    public double receita() {
-        double gasto = 0;
-        ArrayList<compras> lista = getHistoricoCompras();
-
-        for (compras c : lista) {
-            gasto += c.getValorTot();
-        }
-        return gasto;
-    }
-
 }

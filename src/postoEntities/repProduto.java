@@ -5,7 +5,7 @@ import java.io.*;
 import posto.exceptions.invalidItem;
 
 public class repProduto {
-    ArrayList<produto> repProdutos;
+    private ArrayList<produto> repProdutos;
     
     public repProduto(){
         repProdutos = new ArrayList<>();
@@ -34,6 +34,10 @@ public class repProduto {
         }
     }
     
+    public ArrayList<produto> getRepProduto(){
+        return this.repProdutos;
+    }
+
     public produto getProduto(int id) throws invalidItem{
         for (produto p: repProdutos){
             if (p.getId() ==id){

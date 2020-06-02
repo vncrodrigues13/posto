@@ -152,7 +152,7 @@ public class acessoAdmin {
         int anoAdmissao = in.nextInt();
         String nome = primeiroNome+" "+ultimoNome;
         g = new gerente(cpf, nome, new contrato(valorHora, valorExtra), anoAdmissao);
-        repFuncionarios.reescrevendoAdmissao(g);
+        repFuncionarios.admissao(g);
     }
 
     public void listarClientes() {

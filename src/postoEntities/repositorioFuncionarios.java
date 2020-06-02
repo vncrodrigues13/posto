@@ -4,8 +4,8 @@ import Funcionario.*;
 import admin.gerente;
 import java.util.ArrayList;
 import java.io.*;
-
-public class repositorioFuncionarios {
+import admin.gerente;
+public class repositorioFuncionarios implements Runnable {
 
     private String path = ".\\src\\file\\funcionarios.txt";
     private String pathGerente = ".\\src\\file\\listagerente.txt";
@@ -36,15 +36,21 @@ public class repositorioFuncionarios {
         }
         return null;
     }
+    public gerente getGerente(String cpf){
+        for (funcionario f: lista_funcionarios){
+            if (f.getCpf().equals(cpf)){
+                return (gerente) f;
+            }
+        }
+        return null;
+    }
 
     public void admissao(funcionario f){
         lista_funcionarios.add(f);
-        reescrevendoAdmissao(f);
     }
 
     public void demissao(funcionario f) {
         lista_funcionarios.remove(f);
-        reescrevendoDemissao(f);
     }
 
     public void openFile() {
@@ -96,37 +102,31 @@ public class repositorioFuncionarios {
         }
     }
 
-    public void reescrevendoDemissao(funcionario demitido) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-            for (funcionario f : lista_funcionarios) {
-                bw.write(f.addString());
-                bw.newLine();
-                bw.flush();
-            }
-        } catch (IOException e) {
-
-        }
+    public void save(){
+        Thread save = new Thread(this);
+        save.start();
     }
+    
 
-    public void reescrevendoAdmissao(funcionario f) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
-            BufferedWriter bwg = new BufferedWriter(new FileWriter(pathGerente));
-            for (funcionario func : lista_funcionarios) {
-                if (func instanceof gerente) {
-                    bwg.write(func.addString());
-                    bwg.newLine();
-                    bwg.flush();
-                } else {
-                    bw.write(func.addString());
-                    bw.newLine();
-                    bw.flush();
+    @Override
+    public void run(){
+            try {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+                BufferedWriter bwg = new BufferedWriter(new FileWriter(pathGerente));
+                for (funcionario func : lista_funcionarios) {
+                    if (func instanceof gerente) {
+                        bwg.write(func.addString());
+                        bwg.newLine();
+                        bwg.flush();
+                    } else {
+                        bw.write(func.addString());
+                        bw.newLine();
+                        bw.flush();
+                    }
                 }
+            } catch (IOException e) {
+                System.out.println("Error");
             }
-        } catch (IOException e) {
-            System.out.println("Error");
-        }
     }
 
     public void listarFuncionarios() {

@@ -2,7 +2,10 @@ package admin;
 
 import Funcionario.contrato;
 import Funcionario.enumFuncionario;
-public class gerente extends Funcionario.funcionario{
+import Funcionario.funcionario;
+
+public class gerente extends funcionario{
+    
     private int ano_admissao;
     
     public gerente(String cpf, String nome, contrato contratoFuncionario,int ano) {
