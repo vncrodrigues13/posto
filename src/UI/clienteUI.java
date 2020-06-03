@@ -1,6 +1,9 @@
-package Cliente;
+package UI;
+
+import Cliente.cliente;
 
 import buyEntities.compras;
+
 import buyEntities.produto;
 
 import java.util.Calendar;
@@ -10,9 +13,6 @@ import posto.exceptions.invalidItem;
 import posto.exceptions.invalidPrice;
 import posto.exceptions.invalidQtdItens;
 import java.io.FileNotFoundException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import posto.exceptions.*;
 
@@ -29,7 +29,7 @@ public class clienteUI implements I_ClienteUI {
 
     private repositorioContas repContas;
 
-    private compras carrinhoTemp;
+    private compras carrinhoTemp = null;
 
     private repProduto repProduto;
 
@@ -42,11 +42,12 @@ public class clienteUI implements I_ClienteUI {
     }
 
     @Override
-    public void fazerCompras() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens{
+    public void fazerCompras() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens {
         boolean rep = true;
-
         double valorPago;
-        System.out.println("Boa noite!");
+
+        carrinhoTemp = new compras(user.getCpf());
+
         do {
             System.out.println("Caso vc queira adicionar novos itens, digite: 1");
             System.out.println("Caso vc queira adicionar combustivel, digite: 2");
@@ -67,22 +68,17 @@ public class clienteUI implements I_ClienteUI {
                     break;
                  */
                 case 1:
-                    listarItens();
-                    System.out.print("Qual a id do item que vc deseja adicionar: ");
-                    id = in.nextInt();
-                    if (id > 5) {
-                        adicionarItem(id);
-                    } else {
-                        throw new naoProduto();
-                    }
+                    repProduto.listarItens();
+                    adicionarItem();
                     break;
                 case 2:
-                    listarCombustiveis();
+
+                    repProduto.listarCombustiveis();
                     System.out.print("Qual a id do combustivel que voce deseja adicionar: ");
                     id = in.nextInt();
                     System.out.print("Quanto de combustivel vc deseja colocar: ");
                     valorPago = in.nextDouble();
-                    adicionarCombustivel(id, valorPago);
+                    addCombustivel(id, valorPago);
                     break;
                 case 3:
                     if (!carrinhoTemp.isVazio()) {
@@ -140,7 +136,17 @@ public class clienteUI implements I_ClienteUI {
         System.out.printf("\n\nValor total: %.2f", carrinhoTemp.getValorTot());
     }
 
+    @Override
     public void adicionarItem(int id) throws invalidItem, invalidQtdItens {
+        /*
+        System.out.print("Qual a id do item que vc deseja adicionar: ");
+                    id = in.nextInt();
+                    if (id > 5) {
+                        adicionarItem(id);
+                    } else {
+                        throw new naoProduto();
+                    }
+        
         try {
             int i;
             System.out.print("Quantos itens vc quer? ");
@@ -151,6 +157,15 @@ public class clienteUI implements I_ClienteUI {
         } catch (invalidQtdItens e) {
             throw new invalidQtdItens();
         }
+         */
+        do {
+            System.out.print("Insira a ID do item em que você deseja adicionar: ");
+            id = in.nextInt();
+            
+            if (repProduto.getProduto(id) == null){
+                System.out.println("Item invalido");
+            }
+        } while (repProduto.getProduto(id) == null);
     }
 
     public void removerItem(int id) throws invalidItem {
@@ -161,13 +176,13 @@ public class clienteUI implements I_ClienteUI {
         }
     }
 
-    public void adicionarCombustivel(int id, double valor) throws invalidItem, invalidPrice {
+    public void addCombustivel(int id, double valor) {
         try {
             carrinhoTemp.addComb(repProduto.getProduto(id), valor);
         } catch (invalidItem e) {
-            throw new invalidItem();
+            System.out.println("Item invalido");
         } catch (invalidPrice e) {
-            throw new invalidPrice();
+            System.out.println("Valor de Abastecimento invalido");
         }
     }
 
@@ -187,24 +202,18 @@ public class clienteUI implements I_ClienteUI {
         }
     }
 
-    public void listarCombustiveis() {
-        for (produto p : repProduto.getRepProduto()) {
-            if (p.getId() <= 5) {
-                System.out.println(p);
-            }
-        }
-    }
-
-    public void listarItens() {
-        for (produto p : repProduto.getRepProduto()) {
-            if (p.getId() > 5) {
-                System.out.println(p);
-            }
-        }
-    }
-
     public void adcionarCompraConta(String cpf, compras car) {
         repContas.getCliente(cpf).addArrayList(car);
+    }
+
+    @Override
+    public void finalizarCompras() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addCarrinhoToConta(cliente c, compras car) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

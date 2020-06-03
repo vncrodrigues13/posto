@@ -5,10 +5,10 @@ import java.io.*;
 import posto.exceptions.invalidItem;
 
 public class repProduto {
-    private ArrayList<produto> repProdutos;
+    private ArrayList<produto> lista_produtos;
     
     public repProduto(){
-        repProdutos = new ArrayList<>();
+        lista_produtos = new ArrayList<>();
         preencher();
     }
     public void preencher(){
@@ -20,7 +20,7 @@ public class repProduto {
             line = br.readLine();
             while (line != null){
                 var = line.split(";");
-                repProdutos.add(new produto(Integer.parseInt(var[0]), var[1], Double.parseDouble(var[2]), var[3]));
+                lista_produtos.add(new produto(Integer.parseInt(var[0]), var[1], Double.parseDouble(var[2]), var[3]));
                 line = br.readLine();
             }
         }catch (IOException e){
@@ -29,21 +29,36 @@ public class repProduto {
     }
     
     public void listar(){
-        for (produto p: repProdutos){
+        for (produto p: lista_produtos){
             System.out.println(p);
+        }
+    }
+    public void listarCombustiveis(){
+        for(produto p: lista_produtos){
+            if (p.getId() <= 5){
+                System.out.println(p);
+            }
+        }
+    }
+    public void listarItens(){
+        for(produto p: lista_produtos){
+            if (p.getId() > 5){
+                System.out.println(p);
+            }
         }
     }
     
     public ArrayList<produto> getRepProduto(){
-        return this.repProdutos;
+        return this.lista_produtos;
     }
 
     public produto getProduto(int id) throws invalidItem{
-        for (produto p: repProdutos){
+        for (produto p: lista_produtos){
             if (p.getId() ==id){
                 return p;
             }
         }
         throw new invalidItem();
     }
+    
 }

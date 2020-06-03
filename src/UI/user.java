@@ -19,17 +19,17 @@ import postoEntities.repositorioFuncionarios;
 
 import admin.acessoAdmin;
 import admin.acessoGerente;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class begin implements I_userInterface {
+
+public class user implements I_user {
 
     public Scanner in = new Scanner(System.in);
     
-    private repositorioContas rc;
-    private repositorioFuncionarios repFuncionarios;
+    private repositorioContas repContas;
+    private repositorioFuncionarios repFuncionarios = repositorioFuncionarios.getInstance();
     private repositorioAdmin repAdmin;
     private String cpf;
+    private clienteUI userCliente;
 
     public static void main(String[] args) throws invalidItem, invalidPrice, invalidQtdItens,
             naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
@@ -37,7 +37,7 @@ public class begin implements I_userInterface {
         
     }
 
-    public void start(){
+    public void start() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens {
         boolean running = true;
         int resposta; 
         do{
@@ -69,17 +69,18 @@ public class begin implements I_userInterface {
             
         }while(running);
     }
-    public void entrarContaCliente() {
+    @Override
+    public void entrarContaCliente() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens {
         System.out.print("Insira o seu CPF: ");
         cpf = in.next();
 
-        if (rc.existeConta(cpf)) {
-            return rc.getCliente(cpf); //chamar clienteUI
+        if (repContas.existeConta(cpf)) {
+            userCliente = new clienteUI(repContas.getCliente(cpf));
         }
         System.out.println("Conta inexistente");
         
     }
-    
+    @Override
     public void criarContaCliente() {
         do {
             System.out.print("Insira o seu cpf: ");
@@ -87,21 +88,20 @@ public class begin implements I_userInterface {
 
             if (cpf.length() == 11) {
 
-                if (rc.existeConta(cpf)) {
+                if (repContas.existeConta(cpf)) {
                     System.out.println("Conta existente");
                 } else {
-                    rc.adicionarContaLista(cpf);
-                    rc.getCliente(cpf); //chamar clienteUI
+                    repContas.adicionarContaLista(cpf);
+                    repContas.getCliente(cpf); //chamar clienteUI
                 }
             } else {
                 System.out.println("CPF INVALIDO");
             }
         } while (true);
     }
-
+    @Override
     public void entrarContaAdmin() {
         boolean failConnect = false;
-        char resp = 0;
         repAdmin = repositorioAdmin.getInstance();
         do {
             System.out.print("Insira o seu CPF: ");
@@ -138,6 +138,8 @@ public class begin implements I_userInterface {
         } while (failConnect);
 
     }
+
+    
 
     
 
