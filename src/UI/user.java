@@ -20,40 +20,50 @@ import postoEntities.repositorioFuncionarios;
 import admin.acessoAdmin;
 import admin.acessoGerente;
 
-
 public class user implements I_user {
 
     public Scanner in = new Scanner(System.in);
-    
+
     private repositorioContas repContas;
-    private repositorioFuncionarios repFuncionarios = repositorioFuncionarios.getInstance();
+    private repositorioFuncionarios repFuncionarios;
     private repositorioAdmin repAdmin;
     private String cpf;
     private clienteUI userCliente;
-
+    private adminUI userAdmin;
+    private posto postoObj;
     public static void main(String[] args) throws invalidItem, invalidPrice, invalidQtdItens,
             naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
-        posto p = new posto();
-        
+        user a = new user();
+
     }
 
-    public void start() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens {
+    public user() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess {
+        postoObj = posto.getInstance();
+        repFuncionarios = repositorioFuncionarios.getInstance();
+        repContas = repositorioContas.getInstance();
+        repAdmin = repositorioAdmin.getInstance();
+        start();
+
+    }
+
+    public void start() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess {
         boolean running = true;
-        int resposta; 
-        do{
+        int resposta;
+        do {
             System.out.println("Criar nova conta, digite 1");
             System.out.println("Acessar conta, digite 2");
             System.out.println("Entrar Admnistrador, digite 3");
             System.out.println("Entrar Gerente, digite 4");
             System.out.print("Resposta -> ");
             resposta = in.nextInt();
-            
-            switch (resposta){
+
+            switch (resposta) {
                 case 1:
                     criarContaCliente();
                     break;
                 case 2:
                     entrarContaCliente();
+
                     break;
                 case 3:
                     entrarContaAdmin();
@@ -64,13 +74,13 @@ public class user implements I_user {
                 default:
                     System.out.println("Comando invalido");
             }
-            
-            
-            
-        }while(running);
+            postoObj.fullSave();
+        } while (running);
     }
+
     @Override
-    public void entrarContaCliente() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens {
+    public void entrarContaCliente() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens,
+            naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess {
         System.out.print("Insira o seu CPF: ");
         cpf = in.next();
 
@@ -78,69 +88,66 @@ public class user implements I_user {
             userCliente = new clienteUI(repContas.getCliente(cpf));
         }
         System.out.println("Conta inexistente");
-        
+
     }
+
     @Override
-    public void criarContaCliente() {
+    public void criarContaCliente() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess, FileNotFoundException {
+        boolean repeticao = false;
         do {
             System.out.print("Insira o seu cpf: ");
             cpf = in.next();
 
-            if (cpf.length() == 11) {
+            if (!stringValid.temLetras(cpf)) {
+                if (cpf.length() == 11) {
 
-                if (repContas.existeConta(cpf)) {
-                    System.out.println("Conta existente");
+                    if (repContas.existeConta(cpf)) {
+                        System.out.println("Conta existente");
+                        repeticao = true;
+                    } else {
+                        repContas.adicionarContaLista(cpf);
+                        clienteUI a = new clienteUI(repContas.getCliente(cpf));
+                    }
                 } else {
-                    repContas.adicionarContaLista(cpf);
-                    repContas.getCliente(cpf); //chamar clienteUI
+                    System.out.println("CPF INVALIDO");
+                    repeticao = true;
                 }
-            } else {
-                System.out.println("CPF INVALIDO");
+            }else{
+                System.out.println("CPF Invalido, contem letras");
+                repeticao = true;
             }
-        } while (true);
+        } while (repeticao);
     }
+
     @Override
-    public void entrarContaAdmin() {
+    public void entrarContaAdmin() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException {
         boolean failConnect = false;
-        repAdmin = repositorioAdmin.getInstance();
+
         do {
             System.out.print("Insira o seu CPF: ");
             cpf = in.next();
 
             if (cpf.length() == 11) {
                 if (repAdmin.isAdmin(cpf)) { //verificar se é um admin
-                    try {
-                        acessoAdmin a = new acessoAdmin(); //abrindo menu de admin
-                    } catch (invalidItem ex) {
-                        ex.printStackTrace();
-                    } catch (invalidPrice ex) {
-                        ex.printStackTrace();
-                    } catch (invalidQtdItens ex) {
-                        ex.printStackTrace();
-                    } catch (FileNotFoundException ex) {
-                        ex.printStackTrace();
-                    }
+
+                    userAdmin = new adminUI();
                     break;
                 } else {
                     System.out.println("Conta inexistente");    //se nao existir conta no repositorio de admin
                     failConnect = true;
                 }
-                
-            }else{  //quantidade de digitos no cpf diferente de 11, o que nao existe
-                System.out.println("Quantidade de digitos invalidos"); 
-                failConnect = true;                                                                         
+
+            } else {  //quantidade de digitos no cpf diferente de 11, o que nao existe
+                System.out.println("Quantidade de digitos invalidos");
+                failConnect = true;
             }
-            
-            if (failConnect){
+
+            if (failConnect) {
                 System.out.println("Tente novamente");
             }
-            
+
         } while (failConnect);
 
     }
-
-    
-
-    
 
 }

@@ -4,8 +4,6 @@ import Cliente.cliente;
 
 import buyEntities.compras;
 
-import buyEntities.produto;
-
 import java.util.Calendar;
 
 import postoEntities.repositorioContas;
@@ -18,14 +16,13 @@ import posto.exceptions.*;
 
 import postoEntities.repProduto;
 import java.util.Scanner;
+import postoEntities.posto;
 
-public class clienteUI implements I_ClienteUI {
+public final class clienteUI implements I_ClienteUI {
 
     private Scanner in = new Scanner(System.in);
 
-    private cliente user;
-
-    private Calendar calendar; //usar na hora de setar a dada das compras
+    private final cliente user;
 
     private repositorioContas repContas;
 
@@ -35,90 +32,57 @@ public class clienteUI implements I_ClienteUI {
 
     private int id;
 
-    public clienteUI(cliente c) throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException {
+    private posto p;
+
+    public clienteUI(cliente c) throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess, FileNotFoundException {
         this.user = c;
+        p = posto.getInstance();
         repContas = repositorioContas.getInstance();
         repProduto = new repProduto();
+        start();
+        p.fullSave();
     }
 
-    @Override
-    public void fazerCompras() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens {
-        boolean rep = true;
-        double valorPago;
-
-        carrinhoTemp = new compras(user.getCpf());
-
+    public void start() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens, naoCombustivel, noHistory, invalidLogin, invalidAccess {
+        int resp, awnser = 1;
+        boolean rept = false;
         do {
-            System.out.println("Caso vc queira adicionar novos itens, digite: 1");
-            System.out.println("Caso vc queira adicionar combustivel, digite: 2");
-            System.out.println("Caso vc queira remover algum item, digite: 3");
-            System.out.println("Caso vc queira aumentar a quantidade de algum item, digite: 4");
-            System.out.println("Caso vc queira decrementar a quantidade de algum item, digite: 5");
-            System.out.println("Caso queira finalizar a conta, digite: 0");
-            System.out.print("Resp:");
-            int valor = in.nextInt();
+            do {
+                System.out.println("Compras/Abastecer, digite 1");
+                System.out.println("Historico de Compras, digite 2");
+                System.out.print("--->>> ");
+                resp = in.nextInt();
+                if (resp != 1 && resp != 2) {
+                    System.out.println("RESPOSTA INVALIDA\n");
+                }
+            } while (resp != 1 && resp != 2);
 
-            switch (valor) {
-                /*
-                case 0:
-                    finalizarCompra();
-                    repCompras.addRepositorio(carrinhoTemp); //add ao repositorio de compras
-                    adcionarCompraConta(carrinhoTemp.getCPF(), carrinhoTemp);
-                    rep = false;
-                    break;
-                 */
+            switch (resp) {
                 case 1:
-                    repProduto.listarItens();
-                    adicionarItem();
+                    fazerCompras();
                     break;
                 case 2:
-
-                    repProduto.listarCombustiveis();
-                    System.out.print("Qual a id do combustivel que voce deseja adicionar: ");
-                    id = in.nextInt();
-                    System.out.print("Quanto de combustivel vc deseja colocar: ");
-                    valorPago = in.nextDouble();
-                    addCombustivel(id, valorPago);
+                    listarHistoricoCompras();
                     break;
-                case 3:
-                    if (!carrinhoTemp.isVazio()) {
-                        carrinhoTemp.listarCarrinho();
-                        System.out.print("Qual a id do item vc deseja remover: ");
-                        id = in.nextInt();
-                        removerItem(id);
-                        break;
-                    }
-
-                case 4:
-                    if (!carrinhoTemp.isVazio()) {
-                        carrinhoTemp.listarCarrinhoitens();
-                        System.out.print("Qual o item vc deseja aumentar a quantidade: ");
-                        id = in.nextInt();
-                        try {
-                            addQtd(id);
-                        } catch (invalidItem ex) {
-                            throw new invalidItem();
-                        }
-                        break;
-                    }
-
-                case 5:
-                    if (!carrinhoTemp.isVazio()) {
-                        carrinhoTemp.listarCarrinhoitens();
-                        System.out.print("Qual o item vc deseja diminuir a quantidade: ");
-                        id = in.nextInt();
-                        try {
-                            decrQtd(id);
-                        } catch (invalidItem ex) {
-                            throw new invalidItem();
-                        }
-                        break;
-                    }
-
             }
-            System.out.println("\n\n\n\n\n\n\n\n");
+            do {
+                System.out.println("Alguma outra ação, digite 1");
+                System.out.println("Finalizar programa, digite 2");
+                System.out.print("--->");
+                awnser = in.nextInt();
+                
+                if (awnser != 1 && awnser != 2)
+                    System.out.println("Resposta invalida");
+            } while (awnser != 1 && awnser != 2);
+            
+            if (awnser == 1) {
+                rept = true;
+            }
+            if (awnser == 2) {
+                rept = false;
+            }
 
-        } while (rep);
+        } while (rept);
     }
 
     @Override
@@ -130,90 +94,125 @@ public class clienteUI implements I_ClienteUI {
         }
     }
 
-    public void finalizarCompra() {
-        carrinhoTemp.setData_compra(Calendar.getInstance());
-        carrinhoTemp.listarCarrinho();
-        System.out.printf("\n\nValor total: %.2f", carrinhoTemp.getValorTot());
+    @Override
+    public void fazerCompras() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel {
+        boolean rep = true;
+        double valorPago;
+
+        carrinhoTemp = new compras(user.getCpf());
+
+        do {
+            System.out.println("Caso vc queira adicionar novos itens, digite: 1");
+            System.out.println("Caso vc queira remover algum item, digite: 2");
+            System.out.println("Caso vc queira adicionar combustivel, digite: 3");
+            System.out.println("Caso queira finalizar a conta, digite: 0");
+            System.out.print("Resp:");
+            int valor = in.nextInt();
+
+            switch (valor) {
+                case 0:
+                    try {
+                        finalizarCompras();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    rep = false;
+                    break;
+                case 1:
+                    repProduto.listarItens();
+                    adicionarItem();
+                    break;
+                case 2:
+                    if (!carrinhoTemp.isVazio()) {
+                        removerItem();
+                    } else {
+                        System.out.println("Seu carrinho está vazio");
+                    }
+                    break;
+                case 3:
+                    repProduto.listarCombustiveis();
+                    addCombustivel();
+                    break;
+
+            }
+            System.out.println("\n\n");
+
+        } while (rep);
     }
 
     @Override
-    public void adicionarItem(int id) throws invalidItem, invalidQtdItens {
-        /*
-        System.out.print("Qual a id do item que vc deseja adicionar: ");
-                    id = in.nextInt();
-                    if (id > 5) {
-                        adicionarItem(id);
-                    } else {
-                        throw new naoProduto();
-                    }
-        
-        try {
-            int i;
-            System.out.print("Quantos itens vc quer? ");
-            i = in.nextInt();
-            carrinhoTemp.addItem(repProduto.getProduto(id), i);
-        } catch (invalidItem e) {
-            throw new invalidItem();
-        } catch (invalidQtdItens e) {
-            throw new invalidQtdItens();
-        }
-         */
+    public void adicionarItem() throws invalidItem, invalidQtdItens {
+        int qtd;
         do {
             System.out.print("Insira a ID do item em que você deseja adicionar: ");
             id = in.nextInt();
-            
-            if (repProduto.getProduto(id) == null){
-                System.out.println("Item invalido");
+            if (repProduto.getProduto(id) == null) {
+                throw new invalidItem();
             }
         } while (repProduto.getProduto(id) == null);
-    }
 
-    public void removerItem(int id) throws invalidItem {
-        try {
-            carrinhoTemp.removerItem(repProduto.getProduto(id));
-        } catch (invalidItem e) {
-            throw new invalidItem();
-        }
-    }
+        do {
+            System.out.print("Quantidade: ");
+            qtd = in.nextInt();
 
-    public void addCombustivel(int id, double valor) {
-        try {
-            carrinhoTemp.addComb(repProduto.getProduto(id), valor);
-        } catch (invalidItem e) {
-            System.out.println("Item invalido");
-        } catch (invalidPrice e) {
-            System.out.println("Valor de Abastecimento invalido");
-        }
-    }
-
-    public void addQtd(int id) throws invalidItem {
-        try {
-            carrinhoTemp.addItem(repProduto.getProduto(id));
-        } catch (invalidItem e) {
-            throw new invalidItem();
-        }
-    }
-
-    public void decrQtd(int id) throws invalidItem {
-        try {
-            carrinhoTemp.diminuirItem(repProduto.getProduto(id));
-        } catch (invalidItem e) {
-            throw new invalidItem();
-        }
-    }
-
-    public void adcionarCompraConta(String cpf, compras car) {
-        repContas.getCliente(cpf).addArrayList(car);
+            if (qtd <= 0) {
+                throw new invalidQtdItens();
+            }
+        } while (qtd <= 0);
+        carrinhoTemp.addItem(repProduto.getProduto(id), qtd);
     }
 
     @Override
-    public void finalizarCompras() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void removerItem() throws invalidItem {
+        carrinhoTemp.listarCarrinho();
+        do {
+            System.out.print("ID do item para remover: ");
+            id = in.nextInt();
+            if (carrinhoTemp.getPedido(repProduto.getProduto(id)) == null) {
+                System.out.println("Item invalido");
+            }
+        } while (carrinhoTemp.getPedido(repProduto.getProduto(id)) == null);
+
+        carrinhoTemp.removerItem(repProduto.getProduto(id));
     }
 
     @Override
-    public void addCarrinhoToConta(cliente c, compras car) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void addCombustivel() throws invalidItem, invalidPrice {
+        double valorAbastecimento;
+        do {
+            System.out.print("ID do combustivel que deseja abastecer: ");
+            id = in.nextInt();
+
+            if (id > 5 || repProduto.getProduto(id) == null) {
+                throw new invalidItem();
+            }
+        } while (id > 5 || repProduto.getProduto(id) == null);
+
+        do {
+            System.out.print("Valor de abastecimento: ");
+            valorAbastecimento = in.nextDouble();
+
+            if (valorAbastecimento <= 0) {
+                throw new invalidPrice();
+            }
+
+        } while (valorAbastecimento <= 0);
+
+        carrinhoTemp.addComb(repProduto.getProduto(id), valorAbastecimento);
+    }
+
+    @Override
+    public void finalizarCompras() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, FileNotFoundException {
+        carrinhoTemp.setData_compra(Calendar.getInstance());
+        carrinhoTemp.listarCarrinho();
+        System.out.printf("\n\nValor Total: R$%.2f", carrinhoTemp.getValorTot());
+        addCarrinhoToConta();
+    }
+
+    private void addCarrinhoToConta() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, FileNotFoundException {
+
+        p.addCompras(user.getCpf(), carrinhoTemp);
     }
 
 }

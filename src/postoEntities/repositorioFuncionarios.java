@@ -36,15 +36,7 @@ public class repositorioFuncionarios implements Runnable {
         }
         return null;
     }
-    public gerente getGerente(String cpf){
-        for (funcionario f: lista_funcionarios){
-            if (f.getCpf().equals(cpf)){
-                return (gerente) f;
-            }
-        }
-        return null;
-    }
-
+    
     public void admissao(funcionario f){
         lista_funcionarios.add(f);
     }
