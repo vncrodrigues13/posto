@@ -90,7 +90,6 @@ public final class clienteUI implements I_ClienteUI {
         try {
             repContas.listarHistoricoComprasCPF(user.getCpf());
         } catch (noHistory ex) {
-            System.out.println("Carrinho Zerado");
         }
     }
 

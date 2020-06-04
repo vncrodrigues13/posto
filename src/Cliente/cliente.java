@@ -20,7 +20,7 @@ public class cliente extends pessoa {
 
     public void listarHistoricoDeCompras() throws noHistory {
         
-        if (historico_de_compras == null) {
+        if (historico_de_compras.isEmpty()) {
             throw new noHistory();
         } else {
             for (compras c : historico_de_compras) {

@@ -31,6 +31,7 @@ public class user implements I_user {
     private clienteUI userCliente;
     private adminUI userAdmin;
     private posto postoObj;
+    private gerenteUI userGerente;
     public static void main(String[] args) throws invalidItem, invalidPrice, invalidQtdItens,
             naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
         user a = new user();
@@ -69,7 +70,7 @@ public class user implements I_user {
                     entrarContaAdmin();
                     break;
                 case 4:
-                    //falta criar metodo entrarContaGerente
+                    entrarContaGerente();
                     break;
                 default:
                     System.out.println("Comando invalido");
@@ -148,6 +149,35 @@ public class user implements I_user {
 
         } while (failConnect);
 
+    }
+
+    @Override
+    public void entrarContaGerente() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException{
+        boolean failConnect;
+        do {
+            System.out.print("Insira o seu CPF: ");
+            cpf = in.next();
+
+            if (cpf.length() == 11) {
+                if (repFuncionarios.isGerente(cpf)) { //verificar se é um gerente
+
+                    userGerente = new gerenteUI();
+                    break;
+                } else {
+                    System.out.println("Conta inexistente");    //se nao existir conta no repositorio de gerente
+                    failConnect = true;
+                }
+
+            } else {  //quantidade de digitos no cpf diferente de 11, o que nao existe
+                System.out.println("Quantidade de digitos invalidos");
+                failConnect = true;
+            }
+
+            if (failConnect) {
+                System.out.println("Tente novamente");
+            }
+
+        } while (failConnect);
     }
 
 }
