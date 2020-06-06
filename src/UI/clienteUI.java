@@ -35,12 +35,11 @@ public final class clienteUI implements I_ClienteUI {
     private posto p;
 
     public clienteUI(cliente c) throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess, FileNotFoundException {
+        p = new posto();
         this.user = c;
-        p = posto.getInstance();
         repContas = repositorioContas.getInstance();
         repProduto = new repProduto();
         start();
-        p.fullSave();
     }
 
     public void start() throws invalidItem, naoProduto, invalidPrice, invalidQtdItens, naoCombustivel, noHistory, invalidLogin, invalidAccess {
@@ -210,7 +209,6 @@ public final class clienteUI implements I_ClienteUI {
     }
 
     private void addCarrinhoToConta() throws invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, FileNotFoundException {
-
         p.addCompras(user.getCpf(), carrinhoTemp);
     }
 

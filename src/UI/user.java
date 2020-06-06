@@ -20,7 +20,7 @@ import postoEntities.repositorioFuncionarios;
 import admin.acessoAdmin;
 import admin.acessoGerente;
 
-public class user implements I_user {
+public class user implements I_user{
 
     public Scanner in = new Scanner(System.in);
 
@@ -32,21 +32,20 @@ public class user implements I_user {
     private adminUI userAdmin;
     private posto postoObj;
     private gerenteUI userGerente;
-    public static void main(String[] args) throws invalidItem, invalidPrice, invalidQtdItens,
-            naoProduto, naoCombustivel, invalidLogin, invalidAccess, noHistory, FileNotFoundException {
-        user a = new user();
-
-    }
-
-    public user() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess {
-        postoObj = posto.getInstance();
+    
+    
+      
+    
+    public user() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess{
+        postoObj = new posto();
         repFuncionarios = repositorioFuncionarios.getInstance();
         repContas = repositorioContas.getInstance();
         repAdmin = repositorioAdmin.getInstance();
         start();
 
     }
-
+    
+    
     public void start() throws FileNotFoundException, invalidItem, invalidPrice, invalidQtdItens, naoProduto, naoCombustivel, noHistory, invalidLogin, invalidAccess {
         boolean running = true;
         int resposta;
