@@ -51,10 +51,10 @@ public class adminUI implements I_adminUI {
                     balancaEconomica();
                     break;
                 case 2:
-                    System.out.println(repFuncionarios);
+                    printIterator.printFunc(repFuncionarios.getRepo());
                     break;
                 case 3:
-                    System.out.println(repContas);
+                    printIterator.printConta(repContas.getRepo());
                     break;
                 case 4:
                     admissaoFuncionario();
@@ -69,6 +69,7 @@ public class adminUI implements I_adminUI {
             do {
                 System.out.println("Alguma outra ação, digite 1");
                 System.out.println("Finalizar, digite 2");
+                System.out.print("---->>>");
                 opcao = in.nextInt();
 
                 if (opcao != 1 && opcao != 2) {

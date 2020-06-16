@@ -8,9 +8,10 @@ import posto.exceptions.invalidPrice;
 import posto.exceptions.invalidQtdItens;
 import Cliente.cliente;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Scanner;
 
-public class repositorioCompras implements Runnable{
+public class repositorioCompras implements Runnable, createIterator{
 
     private repProduto rp = new repProduto();
     private Scanner in;
@@ -84,12 +85,15 @@ public class repositorioCompras implements Runnable{
         c.start();
     }
     
+    /*
+    
     public void listarCompras() {
         System.out.println("\n\n\n\n\n\n\n\n\n*************");
         for (compras c : lista_de_compras) {
             System.out.println(c + "\n");
         }
     }
+    */
 
     public ArrayList<compras> getHistoricoCompras() {
         return lista_de_compras;
@@ -143,4 +147,12 @@ public class repositorioCompras implements Runnable{
             }
         }
     }
+
+    @Override
+    public Iterator getRepo() {
+        return lista_de_compras.iterator();
+    }   
+    
+    
+    
 }

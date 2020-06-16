@@ -87,7 +87,7 @@ public final class clienteUI implements I_ClienteUI {
     @Override
     public void listarHistoricoCompras() {
         try {
-            repContas.listarHistoricoComprasCPF(user.getCpf());
+            printIterator.printCompras(user.listarHistoricoDeCompras());
         } catch (noHistory ex) {
         }
     }
@@ -118,7 +118,7 @@ public final class clienteUI implements I_ClienteUI {
                     rep = false;
                     break;
                 case 1:
-                    repProduto.listarItens();
+                    printIterator.printProd(repProduto.listarItens());
                     adicionarItem();
                     break;
                 case 2:
@@ -129,7 +129,7 @@ public final class clienteUI implements I_ClienteUI {
                     }
                     break;
                 case 3:
-                    repProduto.listarCombustiveis();
+                    printIterator.printProd(repProduto.listarCombustiveis());
                     addCombustivel();
                     break;
 

@@ -9,11 +9,12 @@ import java.io.FileNotFoundException;
 import posto.exceptions.invalidItem;
 import posto.exceptions.invalidPrice;
 import posto.exceptions.invalidQtdItens;
+import postoEntities.createIterator;
 
 public class gerenteUI {
 
     private repositorioFuncionarios repFuncionarios;
-    private repositorioContas repContas;
+    private repositorioContas  repContas;
     private Scanner in;
 
     public gerenteUI() throws invalidItem, invalidPrice, invalidQtdItens, FileNotFoundException {
@@ -35,10 +36,10 @@ public class gerenteUI {
                 failAwnser = resposta != 1 && resposta != 2; 
                 switch (resposta) {
                     case 1:
-                        System.out.println(repFuncionarios);
+                        printIterator.printFunc(repFuncionarios.getRepo());
                         break;
                     case 2:
-                        System.out.println(repContas);
+                        printIterator.printConta(repContas.getRepo());
                         break;
                     default:
                         System.out.println("Resposta invalida");
@@ -50,14 +51,14 @@ public class gerenteUI {
             do {
                 System.out.println("Alguma outra ação, digite 1");
                 System.out.println("Finalizar, digite 2");
+                System.out.print("---->>>");
                 awnserRepeticao = in.nextInt();
 
-                failAwnserRepeticao = resposta != 1 && resposta != 2;
+                failAwnserRepeticao = awnserRepeticao != 1 && awnserRepeticao != 2;
 
             } while (failAwnserRepeticao);
 
             opcao = awnserRepeticao == 1;
         } while (opcao);
-
-    }
+    }   
 }

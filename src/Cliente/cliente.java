@@ -1,5 +1,5 @@
 package Cliente;
-
+import java.util.Iterator;
 import Pessoa.pessoa;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,16 +18,12 @@ public class cliente extends pessoa {
         historico_de_compras.add(c);
     }
 
-    public void listarHistoricoDeCompras() throws noHistory {
+    public Iterator listarHistoricoDeCompras() throws noHistory {
         
         if (historico_de_compras.isEmpty()) {
             throw new noHistory();
-        } else {
-            for (compras c : historico_de_compras) {
-                System.out.println(c);
-                System.out.println("******************************************************");
-            }
-        }
+        } 
+        return this.historico_de_compras.iterator();
     }
 
     public boolean identificacao(String cpf) {
@@ -39,8 +35,8 @@ public class cliente extends pessoa {
         return this.cpf;
     }
 
-    public ArrayList<compras> getListaCompras() {
-        return this.historico_de_compras;
+    public Iterator getListaCompras() {
+        return this.historico_de_compras.iterator();
     }
 
 }

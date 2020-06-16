@@ -5,7 +5,8 @@ import admin.gerente;
 import java.util.ArrayList;
 import java.io.*;
 import admin.gerente;
-public class repositorioFuncionarios implements Runnable {
+import java.util.Iterator;
+public class repositorioFuncionarios implements Runnable, createIterator{
 
     private String path = ".\\src\\file\\funcionarios.txt";
     private String pathGerente = ".\\src\\file\\listagerente.txt";
@@ -121,20 +122,24 @@ public class repositorioFuncionarios implements Runnable {
             }
     }
 
-    public void listarFuncionarios() {
+    public Iterator listarFuncionarios() {
+        ArrayList<funcionario> list = new ArrayList<>();
         for (funcionario f : lista_funcionarios) {
             if (!(f instanceof gerente)) {
-                System.out.println(f);
+                list.add(f);
             }
         }
+        return list.iterator();
     }
 
-    public void listarGerentes() {
+    public Iterator listarGerentes() {
+        ArrayList<funcionario> list = new ArrayList<>();
         for (funcionario f : lista_funcionarios) {
             if (f instanceof gerente) {
-                System.out.println(f);
+                list.add(f);
             }
         }
+        return list.iterator();
     }
 
     public boolean existe(String cpf) {
@@ -162,6 +167,11 @@ public class repositorioFuncionarios implements Runnable {
             System.out.println(f);
         }
         return "";
+    }
+
+    @Override
+    public Iterator getRepo() {
+        return lista_funcionarios.iterator();
     }
 
 }

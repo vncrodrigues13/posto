@@ -1,4 +1,4 @@
-package UI;
+    package UI;
 
 import java.io.FileNotFoundException;
 import posto.exceptions.*;

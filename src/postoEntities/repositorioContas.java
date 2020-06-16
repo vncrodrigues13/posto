@@ -8,9 +8,10 @@ import posto.exceptions.invalidItem;
 import posto.exceptions.invalidPrice;
 import posto.exceptions.invalidQtdItens;
 import java.io.*;
+import java.util.Iterator;
 import posto.exceptions.noHistory;
 
-public class repositorioContas implements Runnable {
+public class repositorioContas implements Runnable, createIterator {
     
     private ArrayList<cliente> lista_clientes; //lista de todos os clientes
 
@@ -81,8 +82,8 @@ public class repositorioContas implements Runnable {
         return this.lista_clientes;
     }
 
-    public void listarHistoricoComprasCPF(String cpf) throws noHistory {
-        getCliente(cpf).listarHistoricoDeCompras();
+    public Iterator listarHistoricoComprasCPF(String cpf) throws noHistory {
+        return getCliente(cpf).listarHistoricoDeCompras();
     }
 
     
@@ -93,5 +94,10 @@ public class repositorioContas implements Runnable {
             System.out.println(c);
         }
         return "";
+    }
+
+    @Override
+    public Iterator getRepo() {
+        return lista_clientes.iterator();
     }
 }
